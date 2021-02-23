@@ -2,13 +2,20 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,15 +29,22 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ImageSegment extends AppCompatActivity {
 
     private static final String TAG = "Loaded Image Segment";
-    ImageView segmentedImage;
+    ImageView segmentedImageView;
     Uri imageUri;
-    Bitmap segImg;
+    //Bitmap loadedImg;
+    Bitmap segmentedImg;
     Mat mRgba;
     String segType;
 
@@ -42,6 +56,14 @@ public class ImageSegment extends AppCompatActivity {
         segType = getIntent().getStringExtra("segType");
         imageUri = getIntent().getParcelableExtra("ImagePath");
         Toast.makeText(this, "Path is " + imageUri.getPath() + " Segmentation type is " + segType, Toast.LENGTH_LONG).show();
+
+        Button saveSeg = findViewById(R.id.saveSeg);
+        saveSeg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveImage(segmentedImg);
+            }
+        });
 
     }
 
@@ -72,15 +94,15 @@ public class ImageSegment extends AppCompatActivity {
     };
 
     public void loadDisplayImg() {
-        segmentedImage = findViewById(R.id.segmentedImage);
+        segmentedImageView = findViewById(R.id.segmentedImage);
         int filterStrength = getIntent().getIntExtra("filterStrength", 1);
         Toast.makeText(this, "Filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         try {
             InputStream is = getContentResolver().openInputStream(imageUri);
-            segImg = BitmapFactory.decodeStream(is);
+            Bitmap loadedImg = BitmapFactory.decodeStream(is);
             Mat mat = new Mat();
-            Utils.bitmapToMat(segImg, mat);
+            Utils.bitmapToMat(loadedImg, mat);
             org.opencv.core.Size s = new Size((filterStrength * 2) + 1,filterStrength * 2 + 1);
             Imgproc.GaussianBlur(mat, mat, s, 2);
             Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
@@ -92,9 +114,9 @@ public class ImageSegment extends AppCompatActivity {
                 Imgproc.Canny(mat, mat, 255 / 3, 255);
             }
 
-            Bitmap bm = Bitmap.createBitmap(mat.cols(),mat.rows(),Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(mat, bm);
-            segmentedImage.setImageBitmap(bm);
+            segmentedImg = Bitmap.createBitmap(mat.cols(),mat.rows(),Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(mat, segmentedImg);
+            segmentedImageView.setImageBitmap(segmentedImg);
             is.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -114,6 +136,64 @@ public class ImageSegment extends AppCompatActivity {
         else {
             Log.d(TAG, "OpenCV is not working.");
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0 , this, mLoaderCallback);
+        }
+    }
+
+    private void saveImage(Bitmap bitmap) {
+        if (android.os.Build.VERSION.SDK_INT >= 29) {
+            ContentValues values = contentValues();
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/" + getString(R.string.app_name));
+            values.put(MediaStore.Images.Media.IS_PENDING, true);
+
+            Uri uri = this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            if (uri != null) {
+                try {
+                    saveImageToStream(bitmap, this.getContentResolver().openOutputStream(uri));
+                    values.put(MediaStore.Images.Media.IS_PENDING, false);
+                    this.getContentResolver().update(uri, values, null, null);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        } else {
+            File directory = new File(Environment.getExternalStorageDirectory().toString() + '/' + getString(R.string.app_name));
+
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            String fileName = System.currentTimeMillis() + ".png";
+            File file = new File(directory, fileName);
+            try {
+                saveImageToStream(bitmap, new FileOutputStream(file));
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
+                this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private ContentValues contentValues() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+        values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        }
+        return values;
+    }
+
+    private void saveImageToStream(Bitmap bitmap, OutputStream outputStream) {
+        if (outputStream != null) {
+            try {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

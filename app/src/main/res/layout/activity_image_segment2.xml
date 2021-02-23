@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ImageSegment">
-
     <ImageView
         android:id="@+id/segmentedImage"
         android:layout_width="411dp"
@@ -13,4 +12,15 @@
         tools:layout_editor_absoluteX="-1dp"
         tools:layout_editor_absoluteY="0dp"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/saveSeg"
+        android:layout_width="416dp"
+        android:layout_height="56dp"
+        android:layout_below="@id/segmentedImage"
+        android:text="Save Image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="675dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
