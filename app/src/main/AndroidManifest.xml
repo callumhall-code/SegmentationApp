@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ImageSegment"></activity>
+        <activity android:name=".CannySelection" />
+        <activity android:name=".ImageSegment" />
         <activity android:name=".SegmentationChoice" />
         <activity
             android:name=".CameraView"

@@ -26,6 +26,7 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
     int edgeStrength;
     int dynamicStrength;
     int threshStrength;
+    String segType;
 
     BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(CameraView.this) {
         @Override
@@ -56,7 +57,7 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_camera);
 
         Intent intent = getIntent();
 
@@ -64,6 +65,7 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
         threshStrength = intent.getIntExtra("threshStrength", 0);
         dynamicStrength = intent.getIntExtra("dynamicStrength", 0);
         filterStrength = intent.getIntExtra("filterStrength", 0);
+        segType = intent.getStringExtra("segType");
 
         javaCameraView = (JavaCameraView) findViewById(R.id.my_camera_view);
         javaCameraView.setVisibility(SurfaceView.VISIBLE);
@@ -87,9 +89,15 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat mat = inputFrame.gray();
         org.opencv.core.Size s = new Size((filterStrength * 2) + 1,filterStrength * 2 + 1);
-        Imgproc.GaussianBlur(mat, mat, s, 2);
-        //Imgproc.Scharr(mat, mat, Imgproc.CV_SCHARR, 0, 1);
-        Imgproc.Sobel(mat, mat, -1, 1,1);
+        if (filterStrength > 0) {
+            Imgproc.GaussianBlur(mat, mat, s, 2);
+        }
+        if (segType.equals("Sobel")) {
+            Imgproc.Sobel(mat, mat, -1, 1, 1);
+        }
+        else if (segType.equals("Canny")) {
+            Imgproc.Canny(mat, mat, 100, 80,3, false);
+        }
         return mat;
         }
 

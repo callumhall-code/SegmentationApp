@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -30,11 +29,12 @@ public class ImageSelect extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_segment);
+        setContentView(R.layout.activity_image_select);
 
         selectImage = findViewById(R.id.imgBtn);
         loadedImage = findViewById(R.id.loadedImage);
         applySegmentation = findViewById(R.id.applySeg);
+
 
         selectImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,11 +46,16 @@ public class ImageSelect extends AppCompatActivity {
         applySegmentation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String segType = getIntent().getStringExtra("segType");
                 Intent intent = new Intent(ImageSelect.this, ImageSegment.class);
                 intent.putExtra("ImagePath", imageUri);
-                intent.putExtra("filterStrength", getIntent().getIntExtra("filterStrength", 0));
-                intent.putExtra("segStrength", getIntent().getIntExtra("segStrength", 0));
-                intent.putExtra("segType", getIntent().getStringExtra("segType"));
+                intent.putExtra("filterStrength", getIntent().getStringExtra("filterStrength"));
+                intent.putExtra("segStrength", getIntent().getStringExtra("segStrength"));
+                intent.putExtra("segType", segType);
+                if(segType.equals("Canny")){
+                    intent.putExtra("cannyLower", getIntent().getStringExtra("cannyLower"));
+                    intent.putExtra("cannyUpper", getIntent().getStringExtra("cannyUpper"));
+                }
                 startActivity(intent);
             }
         });

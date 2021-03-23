@@ -4,17 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SegmentationChoice">
+    tools:context=".CannySelection">
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="183dp"
-        tools:layout_editor_absoluteY="407dp">
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/button_title"
@@ -23,7 +27,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="Segmentation Type" />
+                android:text="Threshold Type" />
 
             <TextView
                 android:id="@+id/strength_title"
@@ -33,23 +37,23 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginRight="32dp"
-                android:text="Segmentation Strength" />
+                android:text="Threshold Strength" />
 
         </TableRow>
 
         <TableRow>
 
             <TextView
-                android:id="@+id/filter_tag"
+                android:id="@+id/lower_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="Filter Strength" />
+                android:text="Lower Threshold" />
 
             <Spinner
-                android:id="@+id/filter_spinner"
+                android:id="@+id/lower_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -63,16 +67,16 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/strength_tag"
+                android:id="@+id/upper_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="Segmentation Strength" />
+                android:text="Upper Threshold" />
 
             <Spinner
-                android:id="@+id/strength_spinner"
+                android:id="@+id/upper_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -83,106 +87,52 @@
 
         </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+        <TableRow>
 
             <TextView
-                android:id="@+id/sobel_txt"
+                android:id="@+id/ratio_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="Sobel Detection" />
+                android:text="Use 3:1 Ratio" />
 
             <Button
-                android:id="@+id/sobel_button"
+                android:id="@+id/ratioBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Go"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:text="Go"/>
+                android:layout_marginRight="32dp"/>
 
         </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+        <TableRow>
 
             <TextView
-                android:id="@+id/canny_txt"
+                android:id="@+id/noRatio_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="Canny Detection" />
+                android:text="Use set thresholds" />
 
             <Button
-                android:id="@+id/canny_button"
+                android:id="@+id/goBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Go"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:text="Go"/>
-        </TableRow>
+                android:layout_marginRight="32dp"/>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:id="@+id/thresh_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="32dp"
-                android:text="Thresholding" />
-
-            <Button
-                android:id="@+id/thresh_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:text="Go"/>
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:id="@+id/dynamic_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="32dp"
-                android:text="Dynamic" />
-
-            <Button
-                android:id="@+id/dynamic_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:text="Go"/>
         </TableRow>
     </TableLayout>
 

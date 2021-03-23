@@ -7,12 +7,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SegmentationChoice extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     String filterStrength = "1"; //defaults to 1, so filter will work if not selected
+    String segmentationStrength = "1";
     Boolean isCamera;
 
     @Override
@@ -25,90 +30,54 @@ public class SegmentationChoice extends AppCompatActivity implements AdapterView
         isCamera = intent.getBooleanExtra("isCamera", false);
 
         Spinner filterSpinner = (Spinner) findViewById(R.id.filter_spinner);
-        Spinner edgeSpinner = (Spinner) findViewById(R.id.edge_spinner);
-        Spinner cannySpinner = (Spinner) findViewById(R.id.canny_spinner);
-        Spinner threshSpinner = (Spinner) findViewById(R.id.thresh_spinner);
-        Spinner dynamicSpinner = (Spinner) findViewById(R.id.dynamic_spinner);
+        Spinner strengthSpinner = (Spinner) findViewById(R.id.strength_spinner);
+        Button beginSobel = findViewById(R.id.sobel_button);
+        Button beginCanny = findViewById(R.id.canny_button);
+        Button beginThresh = findViewById(R.id.thresh_button);
+        Button beginDynamic = findViewById(R.id.dynamic_button);
+
+        beginCanny.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent cannyIntent = new Intent(SegmentationChoice.this, CannySelection.class);
+                cannyIntent.putExtra("filterStrength", Integer.valueOf(filterStrength));
+                cannyIntent.putExtra("segmentationStrength", Integer.valueOf(segmentationStrength));
+                cannyIntent.putExtra("isCamera", isCamera);
+                startActivity(cannyIntent);
+            }
+        });
 
         //Loads values into array
-        ArrayAdapter<String> myAdapter = new ArrayAdapter<>(SegmentationChoice.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.segmentationValues));
-        myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        List<String> strengthList = new ArrayList<String>();
+        for(int i = 1; i<=10; i++) {
+            strengthList.add(String.valueOf(i));
+        }
+        ArrayAdapter<String> strengthAdapter = new ArrayAdapter<String>(SegmentationChoice.this, android.R.layout.simple_list_item_1, strengthList);
 
         //loads array values into spinner
-        filterSpinner.setAdapter(myAdapter);
-        edgeSpinner.setAdapter(myAdapter);
-        cannySpinner.setAdapter(myAdapter);
-        threshSpinner.setAdapter(myAdapter);
-        dynamicSpinner.setAdapter(myAdapter);
-
+        filterSpinner.setAdapter(strengthAdapter);
+        strengthSpinner.setAdapter(strengthAdapter);
         //sets default position of spinner to not in use
-        filterSpinner.setSelection(1, false);
-        edgeSpinner.setSelection(0, false);
-        cannySpinner.setSelection(0,false);
-        threshSpinner.setSelection(0, false);
-        dynamicSpinner.setSelection(0, false);
-
+        filterSpinner.setSelection(0, false);
+        strengthSpinner.setSelection(0, false);
         //listener to act when spinner item selected
         filterSpinner.setOnItemSelectedListener(this);
-        edgeSpinner.setOnItemSelectedListener(this);
-        cannySpinner.setOnItemSelectedListener(this);
-        threshSpinner.setOnItemSelectedListener(this);
-        dynamicSpinner.setOnItemSelectedListener(this);
+        strengthSpinner.setOnItemSelectedListener(this);
     }
 
-   @Override
+    @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long arg3) {
-        String segmentationStrength = parent.getItemAtPosition(position).toString();
         int id = parent.getId();
-        Intent intent;
-
-        if (isCamera) {
-            intent = new Intent(SegmentationChoice.this, CameraView.class);
-       }
-        else {
-            intent = new Intent(SegmentationChoice.this, ImageSelect.class);
-        }
 
         switch (id) {
             case R.id.filter_spinner: {
                 filterStrength = parent.getSelectedItem().toString();
-                Toast.makeText(this, "Filter is " + filterStrength, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Filter is " + filterStrength + " Segmentation strength is " + segmentationStrength, Toast.LENGTH_LONG).show();
                 break;
             }
-            case R.id.edge_spinner: {
-                Toast.makeText(this, "Strength is " + segmentationStrength + " Filter is " + filterStrength + " isCamera is " + String.valueOf(isCamera), Toast.LENGTH_LONG).show();
-                Intent edgeIntent = intent;
-                edgeIntent.putExtra("segStrength", Integer.valueOf(segmentationStrength));
-                edgeIntent.putExtra("segType", "Sobel");
-                edgeIntent.putExtra("filterStrength", Integer.valueOf(filterStrength));
-                startActivity(edgeIntent);
-                break;
-            }
-            case R.id.canny_spinner: {
-                Toast.makeText(this, "Strength is " + segmentationStrength + " Filter is " + filterStrength + " isCamera is " + String.valueOf(isCamera), Toast.LENGTH_LONG).show();
-                Intent cannyIntent = intent;
-                cannyIntent.putExtra("segStrength", Integer.valueOf(segmentationStrength));
-                cannyIntent.putExtra("segType", "Canny");
-                cannyIntent.putExtra("filterStrength", Integer.valueOf(filterStrength));
-                startActivity(cannyIntent);
-                break;
-            }
-            case R.id.thresh_spinner: {
-                Toast.makeText(this, "Strength is " + segmentationStrength + " Filter is " + filterStrength + " isCamera is " + String.valueOf(isCamera), Toast.LENGTH_LONG).show();
-                Intent threshIntent = intent;
-                threshIntent.putExtra("segStrength", Integer.valueOf(segmentationStrength));
-                threshIntent.putExtra("segType", "Threshold");
-                threshIntent.putExtra("filterStrength", Integer.valueOf(filterStrength));
-                startActivity(threshIntent);
-                break;
-            }
-            case R.id.dynamic_spinner: {
-                Toast.makeText(this, "Strength is " + segmentationStrength + " Filter is " + filterStrength + " isCamera is " + String.valueOf(isCamera), Toast.LENGTH_LONG).show();
-                Intent dynamicIntent = intent;
-                dynamicIntent.putExtra("segStrength", Integer.valueOf(segmentationStrength));
-                dynamicIntent.putExtra("segType", "Dynamic");
-                dynamicIntent.putExtra("filterStrength", Integer.valueOf(filterStrength));
-                startActivity(dynamicIntent);
+            case R.id.strength_spinner: {
+                segmentationStrength = parent.getSelectedItem().toString();
+                Toast.makeText(this, "Filter is " + filterStrength + " Segmentation strength is " + segmentationStrength, Toast.LENGTH_LONG).show();
                 break;
             }
         }

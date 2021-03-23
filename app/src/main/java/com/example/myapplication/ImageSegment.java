@@ -3,9 +3,6 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -33,10 +30,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 public class ImageSegment extends AppCompatActivity {
 
@@ -51,7 +44,7 @@ public class ImageSegment extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_segment2);
+        setContentView(R.layout.activity_image_segment);
 
         segType = getIntent().getStringExtra("segType");
         imageUri = getIntent().getParcelableExtra("ImagePath");
@@ -95,7 +88,7 @@ public class ImageSegment extends AppCompatActivity {
 
     public void loadDisplayImg() {
         segmentedImageView = findViewById(R.id.segmentedImage);
-        int filterStrength = getIntent().getIntExtra("filterStrength", 1);
+        int filterStrength = getIntent().getIntExtra("filterStrength", 0);
         Toast.makeText(this, "Filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         try {
@@ -103,17 +96,22 @@ public class ImageSegment extends AppCompatActivity {
             Bitmap loadedImg = BitmapFactory.decodeStream(is);
             Mat mat = new Mat();
             Utils.bitmapToMat(loadedImg, mat);
-            org.opencv.core.Size s = new Size((filterStrength * 2) + 1,filterStrength * 2 + 1);
-            Imgproc.GaussianBlur(mat, mat, s, 2);
             Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
+
+            if (filterStrength > 0) {
+                org.opencv.core.Size s = new Size((filterStrength * 2) + 1, filterStrength * 2 + 1);
+                Imgproc.GaussianBlur(mat, mat, s, 2);
+            }
 
             if (segType.equals("Sobel")) {
                 Imgproc.Sobel(mat, mat, -1, 1,1);
             }
             else if (segType.equals("Canny")) {
-                Imgproc.Canny(mat, mat, 255 / 3, 255);
+                int lowerThresh = getIntent().getIntExtra("cannyLower", 50);
+                int upperThresh = getIntent().getIntExtra("cannyUpper", 150);
+                Toast.makeText(this, "Lower is " + String.valueOf(lowerThresh) + " Upper is " + String.valueOf(upperThresh), Toast.LENGTH_LONG).show();
+                Imgproc.Canny(mat, mat, lowerThresh, upperThresh,3, false);
             }
-
             segmentedImg = Bitmap.createBitmap(mat.cols(),mat.rows(),Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(mat, segmentedImg);
             segmentedImageView.setImageBitmap(segmentedImg);
