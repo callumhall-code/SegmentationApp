@@ -18,10 +18,10 @@ public class CannySelection extends AppCompatActivity implements AdapterView.OnI
 
     Boolean isCamera;
     String lowStrength = "50"; //defaults if button clicked before another number is selected
-    String upperStrength;
+    String upperStrength = "100";
     Intent intent;
-    int segmentationStrength;
-    int filterStrength;
+    String segmentationStrength;
+    String filterStrength;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +29,11 @@ public class CannySelection extends AppCompatActivity implements AdapterView.OnI
         setContentView(R.layout.activity_canny_selection);
 
         isCamera = getIntent().getBooleanExtra("isCamera", false);
-        segmentationStrength = getIntent().getIntExtra("segmentationStrength", 1);
-        filterStrength = getIntent().getIntExtra("filterStrength", 1);
-        Toast.makeText(this, "isCamera is " + String.valueOf(isCamera) + " segmentation strength is " + String.valueOf(segmentationStrength) + " filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_SHORT).show();
+        segmentationStrength = getIntent().getStringExtra("segmentationStrength");
+        filterStrength = getIntent().getStringExtra("filterStrength");
+        //Toast.makeText(this, "isCamera is " + String.valueOf(isCamera) + " segmentation strength is " + segmentationStrength + " filter strength is " + filterStrength + " lower is " + lowStrength + " upper is " + upperStrength, Toast.LENGTH_SHORT).show();
 
-        Spinner lowSpinner = (Spinner) findViewById(R.id.lower_spinner);
+        Spinner lowerSpinner = (Spinner) findViewById(R.id.lower_spinner);
         Spinner upperSpinner = (Spinner) findViewById(R.id.upper_spinner);
         Button ratio = findViewById(R.id.ratioBtn);
         Button start = findViewById(R.id.goBtn);
@@ -49,30 +49,32 @@ public class CannySelection extends AppCompatActivity implements AdapterView.OnI
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Toast.makeText(getBaseContext(), "Upper is " + upperStrength + " Lower is " + lowStrength, Toast.LENGTH_LONG).show();
                 if (Integer.valueOf(upperStrength) < Integer.valueOf(lowStrength)){
                     upperStrength = String.valueOf(Integer.valueOf(lowStrength) * 2);
                 }
-                Intent btnIntent = intent;
-                btnIntent.putExtra("segStrength", segmentationStrength);
-                btnIntent.putExtra("segType", "Canny");
-                btnIntent.putExtra("filterStrength", filterStrength);
-                btnIntent.putExtra("cannyUpper", upperStrength);
-                btnIntent.putExtra("cannyLower", lowStrength);
-                startActivity(btnIntent);
+                Intent startIntent = intent;
+                startIntent.putExtra("segmentationStrength", segmentationStrength);
+                startIntent.putExtra("segType", "Canny");
+                startIntent.putExtra("filterStrength", filterStrength);
+                startIntent.putExtra("cannyUpper", upperStrength);
+                startIntent.putExtra("cannyLower", lowStrength);
+                startActivity(startIntent);
             }
         });
 
         ratio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newUpper = String.valueOf(Integer.valueOf(upperStrength) * 3);
-                Intent btnIntent = intent;
-                btnIntent.putExtra("segStrength", segmentationStrength);
-                btnIntent.putExtra("segType", "Canny");
-                btnIntent.putExtra("filterStrength", filterStrength);
-                btnIntent.putExtra("cannyUpper", newUpper);
-                btnIntent.putExtra("cannyLower", lowStrength);
-                startActivity(btnIntent);
+                //Toast.makeText(getBaseContext(), "Upper is " + upperStrength + " Lower is " + lowStrength, Toast.LENGTH_LONG).show();
+                String newUpper = String.valueOf(Integer.valueOf(lowStrength) * 3);
+                Intent ratioIntent = intent;
+                ratioIntent.putExtra("segmentationStrength", segmentationStrength);
+                ratioIntent.putExtra("segType", "Canny");
+                ratioIntent.putExtra("filterStrength", filterStrength);
+                ratioIntent.putExtra("cannyUpper", newUpper);
+                ratioIntent.putExtra("cannyLower", lowStrength);
+                startActivity(ratioIntent);
             }
         });
 
@@ -94,40 +96,34 @@ public class CannySelection extends AppCompatActivity implements AdapterView.OnI
         }
         ArrayAdapter<String> upperThreshAdapter = new ArrayAdapter<String>(CannySelection.this, android.R.layout.simple_list_item_1, upperThreshList);
 
-        lowSpinner.setAdapter(lowerThreshAdapter);
+        lowerSpinner.setAdapter(lowerThreshAdapter);
         upperSpinner.setAdapter(upperThreshAdapter);
 
-        lowSpinner.setSelection(50,false);
+        lowerSpinner.setSelection(50,false);
         upperSpinner.setSelection(100,false);
 
+        lowerSpinner.setOnItemSelectedListener(this);
+        upperSpinner.setOnItemSelectedListener(this);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long arg3) {
-       int id = parent.getId();
+        int id = parent.getId();
 
-        switch (id){
+        switch (id) {
             case R.id.lower_spinner: {
                 lowStrength = parent.getSelectedItem().toString();
-                Toast.makeText(this, "Upper is " + upperStrength + " Lower is " + lowStrength, Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Upper is " + upperStrength + " Lower is " + lowStrength, Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.upper_spinner: {
                 upperStrength = parent.getSelectedItem().toString();
-                Toast.makeText(this, "Upper is " + upperStrength + " Lower is " + lowStrength, Toast.LENGTH_LONG).show();
-                //Intent upperIntent = intent;
-                //upperIntent.putExtra("segStrength", segmentationStrength);
-                //upperIntent.putExtra("segType", "Canny");
-                //upperIntent.putExtra("filterStrength", filterStrength);
-                //upperIntent.putExtra("cannyUpper", Integer.valueOf(upperStrength));
-                //upperIntent.putExtra("cannyLower", Integer.valueOf(lowStrength));
-                //upperIntent.putExtra("isCanny", true);
-                //startActivity(upperIntent);
+                Toast.makeText(getBaseContext(), "Upper is " + upperStrength + " Lower is " + lowStrength, Toast.LENGTH_LONG).show();
                 break;
             }
         }
     }
-    //Needs to be here but not needed
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 

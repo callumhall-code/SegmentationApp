@@ -12,6 +12,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -23,10 +24,10 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
     JavaCameraView javaCameraView;
     Mat mRGBA, mRGBAT;
     int filterStrength;
-    int edgeStrength;
-    int dynamicStrength;
-    int threshStrength;
     String segType;
+    int segmentationStrength;
+    int upperForCanny;
+    int lowerForCanny;
 
     BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(CameraView.this) {
         @Override
@@ -59,20 +60,22 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        Intent intent = getIntent();
-
-        edgeStrength = intent.getIntExtra("edgeStrength", 0);
-        threshStrength = intent.getIntExtra("threshStrength", 0);
-        dynamicStrength = intent.getIntExtra("dynamicStrength", 0);
-        filterStrength = intent.getIntExtra("filterStrength", 0);
-        segType = intent.getStringExtra("segType");
+        segType = getIntent().getStringExtra("segType");
+        //--- WORKS ---Toast.makeText(getBaseContext(), "segType is " + segType, Toast.LENGTH_LONG).show();
+        if(segType.equals("Canny")){
+            upperForCanny = Integer.valueOf(getIntent().getStringExtra("cannyUpper"));
+            lowerForCanny = Integer.valueOf(getIntent().getStringExtra("cannyLower"));
+        }
+        // --- WORKS ---Toast.makeText(getBaseContext(), "upper is " + String.valueOf(upperForCanny), Toast.LENGTH_LONG).show();
+        // --- WORKS ---Toast.makeText(getBaseContext(), "lower is " + String.valueOf(lowerForCanny), Toast.LENGTH_LONG).show();
+        // --- WORKS ---Toast.makeText(getBaseContext(), "segstrength is " + String.valueOf(segmentationStrength), Toast.LENGTH_LONG).show();
+        filterStrength = ((Integer.valueOf(getIntent().getStringExtra("filterStrength")) * 2) + 1);
+        segmentationStrength = ((Integer.valueOf(getIntent().getStringExtra("segmentationStrength")) * 2) + 1);
+        // --- WORKS ---Toast.makeText(getBaseContext(), "filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         javaCameraView = (JavaCameraView) findViewById(R.id.my_camera_view);
         javaCameraView.setVisibility(SurfaceView.VISIBLE);
         javaCameraView.setCvCameraViewListener(this);
-
-        Toast.makeText(this,"Strength is" + String.valueOf(edgeStrength) + " Filter is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
-
     }
 
     @Override
@@ -88,18 +91,26 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat mat = inputFrame.gray();
-        org.opencv.core.Size s = new Size((filterStrength * 2) + 1,filterStrength * 2 + 1);
-        if (filterStrength > 0) {
-            Imgproc.GaussianBlur(mat, mat, s, 2);
-        }
+        org.opencv.core.Size s = new Size(filterStrength,filterStrength);
+        //Imgproc.GaussianBlur(mat, mat, s, 2);
+
         if (segType.equals("Sobel")) {
-            Imgproc.Sobel(mat, mat, -1, 1, 1);
+            Imgproc.GaussianBlur(mat, mat, s, 0,0, Core.BORDER_DEFAULT);
+            Mat matX= new Mat();
+            Mat matY = new Mat();
+            Mat absMatX = new Mat();
+            Mat absMatY = new Mat();
+            Imgproc.Sobel(mat, matX, CvType.CV_16S, 1, 0, segmentationStrength,1,0, Core.BORDER_DEFAULT);
+            Imgproc.Sobel(mat, matY, CvType.CV_16S, 0, 1, segmentationStrength,1,0, Core.BORDER_DEFAULT);
+            Core.convertScaleAbs(matX, absMatX);
+            Core.convertScaleAbs(matY, absMatY);
+            Core.addWeighted(absMatX, 0.5, absMatY, 0.5, 0, mat);
         }
         else if (segType.equals("Canny")) {
-            Imgproc.Canny(mat, mat, 100, 80,3, false);
+            Imgproc.Canny(mat, mat, lowerForCanny, upperForCanny,segmentationStrength, false);
         }
         return mat;
-        }
+    }
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {

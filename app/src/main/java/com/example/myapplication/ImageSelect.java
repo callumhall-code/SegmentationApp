@@ -35,7 +35,23 @@ public class ImageSelect extends AppCompatActivity {
         loadedImage = findViewById(R.id.loadedImage);
         applySegmentation = findViewById(R.id.applySeg);
 
+        Intent intent = getIntent();
 
+        String segType = intent.getStringExtra("segType");
+        // --- SET WORKS--- Toast.makeText(getBaseContext(), "Seg Type is " + segType, Toast.LENGTH_LONG).show();
+        //---WORKS RATIO---Toast.makeText(getBaseContext(), "Seg Type is " + segType, Toast.LENGTH_LONG).show();
+        String filterStrength = intent.getStringExtra("filterStrength");
+        // --- SET WORKS--- Toast.makeText(getBaseContext(), "Filter is " + filterStrength, Toast.LENGTH_LONG).show();
+        // ---WORKS RATIO---Toast.makeText(getBaseContext(), "Filter is " + filterStrength, Toast.LENGTH_LONG).show();
+        String segmentationStrength = intent.getStringExtra("segmentationStrength");
+        //--- SET WORKS---Toast.makeText(getBaseContext(), "Segmentation strength is " + segmentationStrength, Toast.LENGTH_LONG).show();
+        //--- RATIO WORKS---Toast.makeText(getBaseContext(), "Segmentation strength is " + segmentationStrength, Toast.LENGTH_LONG).show();
+        String cannyUpper = intent.getStringExtra("cannyUpper");
+        // ---SET WORKS--- Toast.makeText(getBaseContext(), "Upper is " + cannyUpper, Toast.LENGTH_LONG).show();
+        // ---RATIO WORKS ---Toast.makeText(getBaseContext(), "Upper is " + cannyUpper, Toast.LENGTH_LONG).show();
+        String cannyLower = intent.getStringExtra("cannyLower");
+        // ---SET WORKS--- Toast.makeText(getBaseContext(), "Lower is " + cannyLower, Toast.LENGTH_LONG).show();
+        //---RATIO WORKS---Toast.makeText(getBaseContext(), "Lower is " + cannyLower, Toast.LENGTH_LONG).show();
         selectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,15 +62,14 @@ public class ImageSelect extends AppCompatActivity {
         applySegmentation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String segType = getIntent().getStringExtra("segType");
                 Intent intent = new Intent(ImageSelect.this, ImageSegment.class);
                 intent.putExtra("ImagePath", imageUri);
-                intent.putExtra("filterStrength", getIntent().getStringExtra("filterStrength"));
-                intent.putExtra("segStrength", getIntent().getStringExtra("segStrength"));
+                intent.putExtra("filterStrength", filterStrength);
+                intent.putExtra("segmentationStrength", segmentationStrength);
                 intent.putExtra("segType", segType);
                 if(segType.equals("Canny")){
-                    intent.putExtra("cannyLower", getIntent().getStringExtra("cannyLower"));
-                    intent.putExtra("cannyUpper", getIntent().getStringExtra("cannyUpper"));
+                    intent.putExtra("cannyLower", cannyLower);
+                    intent.putExtra("cannyUpper", cannyUpper);
                 }
                 startActivity(intent);
             }

@@ -20,6 +20,8 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -40,6 +42,10 @@ public class ImageSegment extends AppCompatActivity {
     Bitmap segmentedImg;
     Mat mRgba;
     String segType;
+    int segmentationStrength;
+    int upperForCanny;
+    int lowerForCanny;
+    int filterStrength;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +53,19 @@ public class ImageSegment extends AppCompatActivity {
         setContentView(R.layout.activity_image_segment);
 
         segType = getIntent().getStringExtra("segType");
+        //--- WORKS ---Toast.makeText(getBaseContext(), "segType is " + segType, Toast.LENGTH_LONG).show();
         imageUri = getIntent().getParcelableExtra("ImagePath");
-        Toast.makeText(this, "Path is " + imageUri.getPath() + " Segmentation type is " + segType, Toast.LENGTH_LONG).show();
+        // --- WORKS ---Toast.makeText(getBaseContext(), "URI is " + imageUri, Toast.LENGTH_LONG).show();
+        if(segType.equals("Canny")){
+            upperForCanny = Integer.valueOf(getIntent().getStringExtra("cannyUpper"));
+            lowerForCanny = Integer.valueOf(getIntent().getStringExtra("cannyLower"));
+            segmentationStrength = ((Integer.valueOf(getIntent().getStringExtra("segmentationStrength")) * 2) + 1);
+        }
+        // --- WORKS ---Toast.makeText(getBaseContext(), "upper is " + String.valueOf(upperForCanny), Toast.LENGTH_LONG).show();
+        // --- WORKS ---Toast.makeText(getBaseContext(), "lower is " + String.valueOf(lowerForCanny), Toast.LENGTH_LONG).show();
+        // --- WORKS ---Toast.makeText(getBaseContext(), "segstrength is " + String.valueOf(segmentationStrength), Toast.LENGTH_LONG).show();
+        filterStrength = ((Integer.valueOf(getIntent().getStringExtra("filterStrength")) * 2) + 1);
+        // --- WORKS ---Toast.makeText(getBaseContext(), "filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         Button saveSeg = findViewById(R.id.saveSeg);
         saveSeg.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +74,6 @@ public class ImageSegment extends AppCompatActivity {
                 saveImage(segmentedImg);
             }
         });
-
     }
 
     static {
@@ -88,30 +104,37 @@ public class ImageSegment extends AppCompatActivity {
 
     public void loadDisplayImg() {
         segmentedImageView = findViewById(R.id.segmentedImage);
-        int filterStrength = getIntent().getIntExtra("filterStrength", 0);
-        Toast.makeText(this, "Filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         try {
             InputStream is = getContentResolver().openInputStream(imageUri);
             Bitmap loadedImg = BitmapFactory.decodeStream(is);
             Mat mat = new Mat();
             Utils.bitmapToMat(loadedImg, mat);
-            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
+            //Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
 
-            if (filterStrength > 0) {
-                org.opencv.core.Size s = new Size((filterStrength * 2) + 1, filterStrength * 2 + 1);
-                Imgproc.GaussianBlur(mat, mat, s, 2);
-            }
+            org.opencv.core.Size s = new Size(filterStrength, filterStrength);
+            //Imgproc.GaussianBlur(mat, mat, s, 2);
 
             if (segType.equals("Sobel")) {
-                Imgproc.Sobel(mat, mat, -1, 1,1);
+                Imgproc.GaussianBlur(mat, mat, s, 0,0, Core.BORDER_DEFAULT);
+                Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
+                Mat matX= new Mat();
+                Mat matY = new Mat();
+                Mat absMatX = new Mat();
+                Mat absMatY = new Mat();
+                Imgproc.Sobel(mat, matX, CvType.CV_16S, 1, 0, segmentationStrength,1,0, Core.BORDER_DEFAULT);
+                Imgproc.Sobel(mat, matY, CvType.CV_16S, 0, 1, segmentationStrength,1,0, Core.BORDER_DEFAULT);
+                Core.convertScaleAbs(matX, absMatX);
+                Core.convertScaleAbs(matY, absMatY);
+                Core.addWeighted(absMatX, 0.5, absMatY, 0.5, 0, mat);
             }
             else if (segType.equals("Canny")) {
-                int lowerThresh = getIntent().getIntExtra("cannyLower", 50);
-                int upperThresh = getIntent().getIntExtra("cannyUpper", 150);
-                Toast.makeText(this, "Lower is " + String.valueOf(lowerThresh) + " Upper is " + String.valueOf(upperThresh), Toast.LENGTH_LONG).show();
-                Imgproc.Canny(mat, mat, lowerThresh, upperThresh,3, false);
+                Imgproc.GaussianBlur(mat, mat, s, 0,0, Core.BORDER_DEFAULT);
+                Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
+                Imgproc.Canny(mat, mat, lowerForCanny, upperForCanny,segmentationStrength, false);
             }
+
             segmentedImg = Bitmap.createBitmap(mat.cols(),mat.rows(),Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(mat, segmentedImg);
             segmentedImageView.setImageBitmap(segmentedImg);

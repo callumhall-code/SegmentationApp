@@ -40,10 +40,27 @@ public class SegmentationChoice extends AppCompatActivity implements AdapterView
             @Override
             public void onClick(View v) {
                 Intent cannyIntent = new Intent(SegmentationChoice.this, CannySelection.class);
-                cannyIntent.putExtra("filterStrength", Integer.valueOf(filterStrength));
-                cannyIntent.putExtra("segmentationStrength", Integer.valueOf(segmentationStrength));
+                cannyIntent.putExtra("filterStrength", filterStrength);
+                cannyIntent.putExtra("segmentationStrength", segmentationStrength);
                 cannyIntent.putExtra("isCamera", isCamera);
                 startActivity(cannyIntent);
+            }
+        });
+
+        beginSobel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sobelIntent;
+                if (isCamera) {
+                    sobelIntent = new Intent(SegmentationChoice.this, CameraView.class);
+                }
+                else {
+                    sobelIntent = new Intent(SegmentationChoice.this, ImageSelect.class);
+                }
+                sobelIntent.putExtra("filterStrength", filterStrength);
+                sobelIntent.putExtra("segmentationStrength", segmentationStrength);
+                sobelIntent.putExtra("segType", "Sobel");
+                startActivity(sobelIntent);
             }
         });
 
@@ -57,9 +74,11 @@ public class SegmentationChoice extends AppCompatActivity implements AdapterView
         //loads array values into spinner
         filterSpinner.setAdapter(strengthAdapter);
         strengthSpinner.setAdapter(strengthAdapter);
+        
         //sets default position of spinner to not in use
         filterSpinner.setSelection(0, false);
         strengthSpinner.setSelection(0, false);
+
         //listener to act when spinner item selected
         filterSpinner.setOnItemSelectedListener(this);
         strengthSpinner.setOnItemSelectedListener(this);
