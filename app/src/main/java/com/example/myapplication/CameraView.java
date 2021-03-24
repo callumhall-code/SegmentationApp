@@ -28,6 +28,9 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
     int segmentationStrength;
     int upperForCanny;
     int lowerForCanny;
+    int thresholdValue;
+    int maxBinary;
+    int thresholdType;
 
     BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(CameraView.this) {
         @Override
@@ -63,14 +66,41 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
         segType = getIntent().getStringExtra("segType");
         //--- WORKS ---Toast.makeText(getBaseContext(), "segType is " + segType, Toast.LENGTH_LONG).show();
         if(segType.equals("Canny")){
-            upperForCanny = Integer.valueOf(getIntent().getStringExtra("cannyUpper"));
-            lowerForCanny = Integer.valueOf(getIntent().getStringExtra("cannyLower"));
+            upperForCanny = Integer.parseInt(getIntent().getStringExtra("cannyUpper"));
+            lowerForCanny = Integer.parseInt(getIntent().getStringExtra("cannyLower"));
+            segmentationStrength = ((Integer.parseInt(getIntent().getStringExtra("segmentationStrength")) * 2) + 1);
+        }
+        if(segType.equals("Threshold")){
+            thresholdValue = Integer.parseInt(getIntent().getStringExtra("threshVal"));
+            maxBinary = Integer.parseInt(getIntent().getStringExtra("maxBinary"));
+            String threshName = getIntent().getStringExtra("threshType");
+            switch (threshName){
+                case "Binary" : {
+                    thresholdType = 0;
+                    break;
+                }
+                case "Binary Inverted" : {
+                    thresholdType = 1;
+                    break;
+                }
+                case "Truncate" : {
+                    thresholdType = 2;
+                    break;
+                }
+                case "To Zero" : {
+                    thresholdType = 3;
+                    break;
+                }
+                case "To Zero Inverted" : {
+                    thresholdType = 4;
+                    break;
+                }
+            }
         }
         // --- WORKS ---Toast.makeText(getBaseContext(), "upper is " + String.valueOf(upperForCanny), Toast.LENGTH_LONG).show();
         // --- WORKS ---Toast.makeText(getBaseContext(), "lower is " + String.valueOf(lowerForCanny), Toast.LENGTH_LONG).show();
         // --- WORKS ---Toast.makeText(getBaseContext(), "segstrength is " + String.valueOf(segmentationStrength), Toast.LENGTH_LONG).show();
-        filterStrength = ((Integer.valueOf(getIntent().getStringExtra("filterStrength")) * 2) + 1);
-        segmentationStrength = ((Integer.valueOf(getIntent().getStringExtra("segmentationStrength")) * 2) + 1);
+        filterStrength = ((Integer.parseInt(getIntent().getStringExtra("filterStrength")) * 2) + 1);
         // --- WORKS ---Toast.makeText(getBaseContext(), "filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         javaCameraView = (JavaCameraView) findViewById(R.id.my_camera_view);
@@ -107,7 +137,12 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
             Core.addWeighted(absMatX, 0.5, absMatY, 0.5, 0, mat);
         }
         else if (segType.equals("Canny")) {
+            Imgproc.GaussianBlur(mat, mat, s, 0,0, Core.BORDER_DEFAULT);
             Imgproc.Canny(mat, mat, lowerForCanny, upperForCanny,segmentationStrength, false);
+        }
+        else if (segType.equals("Threshold")){
+            Imgproc.GaussianBlur(mat, mat, s, 0,0, Core.BORDER_DEFAULT);
+            Imgproc.threshold(mat, mat, thresholdValue, maxBinary, thresholdType);
         }
         return mat;
     }

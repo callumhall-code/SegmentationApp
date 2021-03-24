@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CannySelection">
-
+    tools:context=".ThresholdChoice">
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,7 +26,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="Threshold Type" />
+                android:text="Parameter" />
 
             <TextView
                 android:id="@+id/strength_title"
@@ -37,23 +36,23 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginRight="32dp"
-                android:text="Threshold Strength" />
+                android:text="Value" />
 
         </TableRow>
 
         <TableRow>
 
             <TextView
-                android:id="@+id/lower_tag"
+                android:id="@+id/thresh_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="Lower Threshold" />
+                android:text="Threshold Value" />
 
             <Spinner
-                android:id="@+id/lower_spinner"
+                android:id="@+id/thresh_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -67,16 +66,16 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/upper_tag"
+                android:id="@+id/binary_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="Upper Threshold" />
+                android:text="Max Binary Value" />
 
             <Spinner
-                android:id="@+id/upper_spinner"
+                android:id="@+id/binary_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -90,37 +89,27 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/ratio_tag"
+                android:id="@+id/picker_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="Use 3:1 Ratio" />
+                android:text="Threshold Type" />
 
-            <Button
-                android:id="@+id/ratioBtn"
+            <Spinner
+                android:id="@+id/threshType_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Go"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"/>
+                android:layout_marginRight="32dp" />
 
         </TableRow>
 
         <TableRow>
-
-            <TextView
-                android:id="@+id/noRatio_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="32dp"
-                android:text="Use set thresholds" />
 
             <Button
                 android:id="@+id/beginThresh"

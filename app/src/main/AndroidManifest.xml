@@ -18,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
+        <activity android:name=".ThresholdChoice"></activity>
         <activity android:name=".CannySelection" />
         <activity android:name=".ImageSegment" />
         <activity android:name=".SegmentationChoice" />

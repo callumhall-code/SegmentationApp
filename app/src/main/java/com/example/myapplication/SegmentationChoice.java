@@ -64,6 +64,16 @@ public class SegmentationChoice extends AppCompatActivity implements AdapterView
             }
         });
 
+        beginThresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent threshIntent = new Intent(SegmentationChoice.this, ThresholdChoice.class);
+                threshIntent.putExtra("filterStrength", filterStrength);
+                threshIntent.putExtra("isCamera", isCamera);
+                startActivity(threshIntent);
+            }
+        });
+
         //Loads values into array
         List<String> strengthList = new ArrayList<String>();
         for(int i = 1; i<=10; i++) {

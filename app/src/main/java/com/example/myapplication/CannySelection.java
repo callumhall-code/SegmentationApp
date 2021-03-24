@@ -36,7 +36,7 @@ public class CannySelection extends AppCompatActivity implements AdapterView.OnI
         Spinner lowerSpinner = (Spinner) findViewById(R.id.lower_spinner);
         Spinner upperSpinner = (Spinner) findViewById(R.id.upper_spinner);
         Button ratio = findViewById(R.id.ratioBtn);
-        Button start = findViewById(R.id.goBtn);
+        Button start = findViewById(R.id.beginThresh);
 
         //Choose which activity to move to next
         if (isCamera){

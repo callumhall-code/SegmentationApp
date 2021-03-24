@@ -52,6 +52,14 @@ public class ImageSelect extends AppCompatActivity {
         String cannyLower = intent.getStringExtra("cannyLower");
         // ---SET WORKS--- Toast.makeText(getBaseContext(), "Lower is " + cannyLower, Toast.LENGTH_LONG).show();
         //---RATIO WORKS---Toast.makeText(getBaseContext(), "Lower is " + cannyLower, Toast.LENGTH_LONG).show();
+
+        String threshVal = intent.getStringExtra("threshVal");
+        //---WORKS--- Toast.makeText(getBaseContext(), "Thresh Val is " + threshVal, Toast.LENGTH_LONG).show();
+        String threshType = intent.getStringExtra("threshType");
+        //---WORKS--- Toast.makeText(getBaseContext(), "Thresh Type is " + threshType, Toast.LENGTH_LONG).show();
+        String maxBinary = intent.getStringExtra("maxBinary");
+        //---WORKS--- Toast.makeText(getBaseContext(), "Max binary " + maxBinary, Toast.LENGTH_LONG).show();
+
         selectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +78,11 @@ public class ImageSelect extends AppCompatActivity {
                 if(segType.equals("Canny")){
                     intent.putExtra("cannyLower", cannyLower);
                     intent.putExtra("cannyUpper", cannyUpper);
+                }
+                if(segType.equals("Threshold")){
+                    intent.putExtra("threshVal", threshVal);
+                    intent.putExtra("threshType", threshType);
+                    intent.putExtra("maxBinary", maxBinary);
                 }
                 startActivity(intent);
             }

@@ -46,6 +46,9 @@ public class ImageSegment extends AppCompatActivity {
     int upperForCanny;
     int lowerForCanny;
     int filterStrength;
+    int thresholdValue;
+    int maxBinary;
+    int thresholdType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +60,45 @@ public class ImageSegment extends AppCompatActivity {
         imageUri = getIntent().getParcelableExtra("ImagePath");
         // --- WORKS ---Toast.makeText(getBaseContext(), "URI is " + imageUri, Toast.LENGTH_LONG).show();
         if(segType.equals("Canny")){
-            upperForCanny = Integer.valueOf(getIntent().getStringExtra("cannyUpper"));
-            lowerForCanny = Integer.valueOf(getIntent().getStringExtra("cannyLower"));
-            segmentationStrength = ((Integer.valueOf(getIntent().getStringExtra("segmentationStrength")) * 2) + 1);
+            upperForCanny = Integer.parseInt(getIntent().getStringExtra("cannyUpper"));
+            lowerForCanny = Integer.parseInt(getIntent().getStringExtra("cannyLower"));
+            segmentationStrength = ((Integer.parseInt(getIntent().getStringExtra("segmentationStrength")) * 2) + 1);
         }
+        if(segType.equals("Threshold")){
+            thresholdValue = Integer.parseInt(getIntent().getStringExtra("threshVal"));
+            maxBinary = Integer.parseInt(getIntent().getStringExtra("maxBinary"));
+            String threshName = getIntent().getStringExtra("threshType");
+            switch (threshName){
+                case "Binary" : {
+                    thresholdType = 0;
+                    break;
+                }
+                case "Binary Inverted" : {
+                    thresholdType = 1;
+                    break;
+                }
+                case "Truncate" : {
+                    thresholdType = 2;
+                    break;
+                }
+                case "To Zero" : {
+                    thresholdType = 3;
+                    break;
+                }
+                case "To Zero Inverted" : {
+                    thresholdType = 4;
+                    break;
+                }
+            }
+        }
+
+        filterStrength = ((Integer.parseInt(getIntent().getStringExtra("filterStrength")) * 2) + 1);
         // --- WORKS ---Toast.makeText(getBaseContext(), "upper is " + String.valueOf(upperForCanny), Toast.LENGTH_LONG).show();
         // --- WORKS ---Toast.makeText(getBaseContext(), "lower is " + String.valueOf(lowerForCanny), Toast.LENGTH_LONG).show();
         // --- WORKS ---Toast.makeText(getBaseContext(), "segstrength is " + String.valueOf(segmentationStrength), Toast.LENGTH_LONG).show();
-        filterStrength = ((Integer.valueOf(getIntent().getStringExtra("filterStrength")) * 2) + 1);
+        // --- WORKS ---Toast.makeText(getBaseContext(), "Thresh Value is " + String.valueOf(thresholdValue), Toast.LENGTH_LONG).show();
+        // --- WORKS ---Toast.makeText(getBaseContext(), "Max Binary is " + String.valueOf(maxBinary), Toast.LENGTH_LONG).show();
+        // --- WORKS ---Toast.makeText(getBaseContext(), "Thresh Type is " + String.valueOf(thresholdType), Toast.LENGTH_LONG).show();
         // --- WORKS ---Toast.makeText(getBaseContext(), "filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         Button saveSeg = findViewById(R.id.saveSeg);
@@ -133,6 +167,11 @@ public class ImageSegment extends AppCompatActivity {
                 Imgproc.GaussianBlur(mat, mat, s, 0,0, Core.BORDER_DEFAULT);
                 Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
                 Imgproc.Canny(mat, mat, lowerForCanny, upperForCanny,segmentationStrength, false);
+            }
+            else if (segType.equals("Threshold")){
+                Imgproc.GaussianBlur(mat, mat, s, 0,0, Core.BORDER_DEFAULT);
+                Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY);
+                Imgproc.threshold(mat, mat, thresholdValue, maxBinary, thresholdType);
             }
 
             segmentedImg = Bitmap.createBitmap(mat.cols(),mat.rows(),Bitmap.Config.ARGB_8888);
