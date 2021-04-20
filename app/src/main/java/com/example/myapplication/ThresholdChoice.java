@@ -90,17 +90,17 @@ public class ThresholdChoice extends AppCompatActivity implements AdapterView.On
         switch (id) {
             case R.id.thresh_spinner: {
                 threshVal = parent.getSelectedItem().toString();
-                Toast.makeText(getBaseContext(), "Thresh val is " + threshVal + " Max binary is " + maxBinary + " thresh type is " + threshType, Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Thresh val is " + threshVal, Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.binary_spinner: {
                 maxBinary = parent.getSelectedItem().toString();
-                Toast.makeText(getBaseContext(), "Thresh val is " + threshVal + " Max binary is " + maxBinary + " thresh type is " + threshType, Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Max binary is " + maxBinary, Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.threshType_spinner: {
                 threshType = parent.getSelectedItem().toString();
-                Toast.makeText(getBaseContext(), "Thresh val is " + threshVal + " Max binary is " + maxBinary + " thresh type is " + threshType, Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Thresh type is " + threshType, Toast.LENGTH_LONG).show();
                 break;
             }
         }

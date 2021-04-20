@@ -56,9 +56,8 @@ public class ImageSegment extends AppCompatActivity {
         setContentView(R.layout.activity_image_segment);
 
         segType = getIntent().getStringExtra("segType");
-        //--- WORKS ---Toast.makeText(getBaseContext(), "segType is " + segType, Toast.LENGTH_LONG).show();
         imageUri = getIntent().getParcelableExtra("ImagePath");
-        // --- WORKS ---Toast.makeText(getBaseContext(), "URI is " + imageUri, Toast.LENGTH_LONG).show();
+
         if(segType.equals("Canny")){
             upperForCanny = Integer.parseInt(getIntent().getStringExtra("cannyUpper"));
             lowerForCanny = Integer.parseInt(getIntent().getStringExtra("cannyLower"));
@@ -93,13 +92,6 @@ public class ImageSegment extends AppCompatActivity {
         }
 
         filterStrength = ((Integer.parseInt(getIntent().getStringExtra("filterStrength")) * 2) + 1);
-        // --- WORKS ---Toast.makeText(getBaseContext(), "upper is " + String.valueOf(upperForCanny), Toast.LENGTH_LONG).show();
-        // --- WORKS ---Toast.makeText(getBaseContext(), "lower is " + String.valueOf(lowerForCanny), Toast.LENGTH_LONG).show();
-        // --- WORKS ---Toast.makeText(getBaseContext(), "segstrength is " + String.valueOf(segmentationStrength), Toast.LENGTH_LONG).show();
-        // --- WORKS ---Toast.makeText(getBaseContext(), "Thresh Value is " + String.valueOf(thresholdValue), Toast.LENGTH_LONG).show();
-        // --- WORKS ---Toast.makeText(getBaseContext(), "Max Binary is " + String.valueOf(maxBinary), Toast.LENGTH_LONG).show();
-        // --- WORKS ---Toast.makeText(getBaseContext(), "Thresh Type is " + String.valueOf(thresholdType), Toast.LENGTH_LONG).show();
-        // --- WORKS ---Toast.makeText(getBaseContext(), "filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         Button saveSeg = findViewById(R.id.saveSeg);
         saveSeg.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +130,6 @@ public class ImageSegment extends AppCompatActivity {
 
     public void loadDisplayImg() {
         segmentedImageView = findViewById(R.id.segmentedImage);
-        //Toast.makeText(this, "Filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         try {
             InputStream is = getContentResolver().openInputStream(imageUri);

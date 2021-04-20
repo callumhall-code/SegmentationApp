@@ -31,7 +31,6 @@ public class CannySelection extends AppCompatActivity implements AdapterView.OnI
         isCamera = getIntent().getBooleanExtra("isCamera", false);
         segmentationStrength = getIntent().getStringExtra("segmentationStrength");
         filterStrength = getIntent().getStringExtra("filterStrength");
-        //Toast.makeText(this, "isCamera is " + String.valueOf(isCamera) + " segmentation strength is " + segmentationStrength + " filter strength is " + filterStrength + " lower is " + lowStrength + " upper is " + upperStrength, Toast.LENGTH_SHORT).show();
 
         Spinner lowerSpinner = (Spinner) findViewById(R.id.lower_spinner);
         Spinner upperSpinner = (Spinner) findViewById(R.id.upper_spinner);
@@ -113,12 +112,12 @@ public class CannySelection extends AppCompatActivity implements AdapterView.OnI
         switch (id) {
             case R.id.lower_spinner: {
                 lowStrength = parent.getSelectedItem().toString();
-                Toast.makeText(getBaseContext(), "Upper is " + upperStrength + " Lower is " + lowStrength, Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Lower is " + lowStrength, Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.upper_spinner: {
                 upperStrength = parent.getSelectedItem().toString();
-                Toast.makeText(getBaseContext(), "Upper is " + upperStrength + " Lower is " + lowStrength, Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Upper is " + upperStrength, Toast.LENGTH_LONG).show();
                 break;
             }
         }

@@ -64,7 +64,6 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
         setContentView(R.layout.activity_camera);
 
         segType = getIntent().getStringExtra("segType");
-        //--- WORKS ---Toast.makeText(getBaseContext(), "segType is " + segType, Toast.LENGTH_LONG).show();
         if(segType.equals("Canny")){
             upperForCanny = Integer.parseInt(getIntent().getStringExtra("cannyUpper"));
             lowerForCanny = Integer.parseInt(getIntent().getStringExtra("cannyLower"));
@@ -97,11 +96,7 @@ public class CameraView extends AppCompatActivity implements CameraBridgeViewBas
                 }
             }
         }
-        // --- WORKS ---Toast.makeText(getBaseContext(), "upper is " + String.valueOf(upperForCanny), Toast.LENGTH_LONG).show();
-        // --- WORKS ---Toast.makeText(getBaseContext(), "lower is " + String.valueOf(lowerForCanny), Toast.LENGTH_LONG).show();
-        // --- WORKS ---Toast.makeText(getBaseContext(), "segstrength is " + String.valueOf(segmentationStrength), Toast.LENGTH_LONG).show();
         filterStrength = ((Integer.parseInt(getIntent().getStringExtra("filterStrength")) * 2) + 1);
-        // --- WORKS ---Toast.makeText(getBaseContext(), "filter strength is " + String.valueOf(filterStrength), Toast.LENGTH_LONG).show();
 
         javaCameraView = (JavaCameraView) findViewById(R.id.my_camera_view);
         javaCameraView.setVisibility(SurfaceView.VISIBLE);

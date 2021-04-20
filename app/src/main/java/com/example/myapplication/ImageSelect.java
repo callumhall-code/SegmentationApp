@@ -38,27 +38,14 @@ public class ImageSelect extends AppCompatActivity {
         Intent intent = getIntent();
 
         String segType = intent.getStringExtra("segType");
-        // --- SET WORKS--- Toast.makeText(getBaseContext(), "Seg Type is " + segType, Toast.LENGTH_LONG).show();
-        //---WORKS RATIO---Toast.makeText(getBaseContext(), "Seg Type is " + segType, Toast.LENGTH_LONG).show();
         String filterStrength = intent.getStringExtra("filterStrength");
-        // --- SET WORKS--- Toast.makeText(getBaseContext(), "Filter is " + filterStrength, Toast.LENGTH_LONG).show();
-        // ---WORKS RATIO---Toast.makeText(getBaseContext(), "Filter is " + filterStrength, Toast.LENGTH_LONG).show();
         String segmentationStrength = intent.getStringExtra("segmentationStrength");
-        //--- SET WORKS---Toast.makeText(getBaseContext(), "Segmentation strength is " + segmentationStrength, Toast.LENGTH_LONG).show();
-        //--- RATIO WORKS---Toast.makeText(getBaseContext(), "Segmentation strength is " + segmentationStrength, Toast.LENGTH_LONG).show();
         String cannyUpper = intent.getStringExtra("cannyUpper");
-        // ---SET WORKS--- Toast.makeText(getBaseContext(), "Upper is " + cannyUpper, Toast.LENGTH_LONG).show();
-        // ---RATIO WORKS ---Toast.makeText(getBaseContext(), "Upper is " + cannyUpper, Toast.LENGTH_LONG).show();
         String cannyLower = intent.getStringExtra("cannyLower");
-        // ---SET WORKS--- Toast.makeText(getBaseContext(), "Lower is " + cannyLower, Toast.LENGTH_LONG).show();
-        //---RATIO WORKS---Toast.makeText(getBaseContext(), "Lower is " + cannyLower, Toast.LENGTH_LONG).show();
 
         String threshVal = intent.getStringExtra("threshVal");
-        //---WORKS--- Toast.makeText(getBaseContext(), "Thresh Val is " + threshVal, Toast.LENGTH_LONG).show();
         String threshType = intent.getStringExtra("threshType");
-        //---WORKS--- Toast.makeText(getBaseContext(), "Thresh Type is " + threshType, Toast.LENGTH_LONG).show();
         String maxBinary = intent.getStringExtra("maxBinary");
-        //---WORKS--- Toast.makeText(getBaseContext(), "Max binary " + maxBinary, Toast.LENGTH_LONG).show();
 
         selectImage.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -29,6 +29,8 @@ public class SegmentationChoice extends AppCompatActivity implements AdapterView
         Intent intent = getIntent();
         isCamera = intent.getBooleanExtra("isCamera", false);
 
+        Toast.makeText(this, "Is Camera is " + isCamera.toString(), Toast.LENGTH_LONG).show();
+
         Spinner filterSpinner = (Spinner) findViewById(R.id.filter_spinner);
         Spinner strengthSpinner = (Spinner) findViewById(R.id.strength_spinner);
         Button beginSobel = findViewById(R.id.sobel_button);
@@ -84,7 +86,7 @@ public class SegmentationChoice extends AppCompatActivity implements AdapterView
         //loads array values into spinner
         filterSpinner.setAdapter(strengthAdapter);
         strengthSpinner.setAdapter(strengthAdapter);
-        
+
         //sets default position of spinner to not in use
         filterSpinner.setSelection(0, false);
         strengthSpinner.setSelection(0, false);
@@ -101,12 +103,12 @@ public class SegmentationChoice extends AppCompatActivity implements AdapterView
         switch (id) {
             case R.id.filter_spinner: {
                 filterStrength = parent.getSelectedItem().toString();
-                Toast.makeText(this, "Filter is " + filterStrength + " Segmentation strength is " + segmentationStrength, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Filter is " + filterStrength, Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.strength_spinner: {
                 segmentationStrength = parent.getSelectedItem().toString();
-                Toast.makeText(this, "Filter is " + filterStrength + " Segmentation strength is " + segmentationStrength, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Segmentation strength is " + segmentationStrength, Toast.LENGTH_LONG).show();
                 break;
             }
         }
